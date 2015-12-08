@@ -17,3 +17,8 @@ task :pages do
   system "cd gh-temp/; git add -A; git commit -m 'Updated pages.'; git push -f origin gh-pages" or abort
   FileUtils.rm_rf 'gh-temp'
 end
+
+
+task :test_opal do
+  sh "bundle exec opal --gem bacon -Itest -Ilib -rast test/test_ast.rb"
+end

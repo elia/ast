@@ -186,8 +186,7 @@ module AST
     # @param  [Integer] indent Base indentation level.
     # @return [String]
     def to_sexp(indent=0)
-      indented = "  " * indent
-      sexp = "#{indented}(#{fancy_type}"
+      children_sexp = []
 
       first_node_child = children.index do |child|
         child.is_a?(Node) || child.is_a?(Array)
@@ -195,15 +194,14 @@ module AST
 
       children.each_with_index do |child, idx|
         if child.is_a?(Node) && idx >= first_node_child
-          sexp << "\n#{child.to_sexp(indent + 1)}"
+          children_sexp << "\n#{child.to_sexp(indent + 1)}"
         else
-          sexp << " #{child.inspect}"
+          children_sexp << " #{child.inspect}"
         end
       end
 
-      sexp << ")"
-
-      sexp
+      indented = "  " * indent
+      "#{indented}(#{fancy_type}#{children_sexp.join})"
     end
 
     alias to_s to_sexp
@@ -215,7 +213,7 @@ module AST
     # @return [String]
     def inspect(indent=0)
       indented = "  " * indent
-      sexp = "#{indented}s(:#{@type}"
+      children_sexp = []
 
       first_node_child = children.index do |child|
         child.is_a?(Node) || child.is_a?(Array)
@@ -223,15 +221,13 @@ module AST
 
       children.each_with_index do |child, idx|
         if child.is_a?(Node) && idx >= first_node_child
-          sexp << ",\n#{child.inspect(indent + 1)}"
+          children_sexp << ",\n#{child.inspect(indent + 1)}"
         else
-          sexp << ", #{child.inspect}"
+          children_sexp << ", #{child.inspect}"
         end
       end
 
-      sexp << ")"
-
-      sexp
+      "#{indented}s(:#{@type}#{children_sexp.join})"
     end
 
     # @return [AST::Node] self
